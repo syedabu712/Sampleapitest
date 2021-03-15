@@ -22,33 +22,84 @@ import java.util.Map;
 public class Apitest {
 
 	@Test(enabled = true)
+
 	public void getRequest() throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		ObjectMapper objectMapper = new ObjectMapper();
 
 		RestAssured.baseURI = "http://api.intigral-ott.net/popcorn-api-rs-7.9.10/v1/promotions?";
 
 		RequestSpecification request = RestAssured.given().param("apikey", "GDMSTGExy0sVDlZMzNDdUyZ");
 
 		Response response = request.request(Method.GET);
+
 		// First Validation
+
 		int statusCode = response.getStatusCode();
+
 		Assert.assertEquals(statusCode, 200);
 
 		ResponseBody jsonString = response.getBody();
+
 		String bodyAsString = jsonString.asString();
+
 		Assert.assertEquals(bodyAsString.contains("promotionId") /* Expected value */, true /* Actual Value */,
 				"Response body contains promotionId");
+
 		Assert.assertEquals(bodyAsString.contains("orderId") /* Expected value */, true /* Actual Value */,
 				"Response body contains orderId");
+
 		Assert.assertEquals(bodyAsString.contains("promoArea") /* Expected value */, true /* Actual Value */,
 				"Response body contains promoArea");
+
 		Assert.assertEquals(bodyAsString.contains("promoType") /* Expected value */, true /* Actual Value */,
 				"Response body contains promoType");
+
 		Assert.assertEquals(bodyAsString.contains("showPrice") /* Expected value */, true /* Actual Value */,
 				"Response body contains showPrice");
+
 		Assert.assertEquals(bodyAsString.contains("showText") /* Expected value */, true /* Actual Value */,
 				"Response body contains showText");
+
 		Assert.assertEquals(bodyAsString.contains("localizedText") /* Expected value */, true /* Actual Value */,
 				"Response body contains localizedText");
+
+		Map<String, String> validationmap = new HashMap<>();
+
+		JsonObject responseResultObject = new Gson().fromJson(bodyAsString, JsonObject.class);
+
+		validationmap.put("promotionId", responseResultObject.get("promotions").getAsJsonArray().get(0)
+				.getAsJsonObject().get("promotionId").toString());
+
+		validationmap.put("orderId", responseResultObject.get("promotions").getAsJsonArray().get(0).getAsJsonObject()
+				.get("orderId").toString());
+
+		validationmap.put("promoArea", responseResultObject.get("promotions").getAsJsonArray().get(0).getAsJsonObject()
+				.get("promoArea").toString());
+
+		validationmap.put("promoType", responseResultObject.get("promotions").getAsJsonArray().get(0).getAsJsonObject()
+				.get("promoType").toString());
+
+		validationmap.put("showPrice", responseResultObject.get("promotions").getAsJsonArray().get(0).getAsJsonObject()
+				.get("showPrice").toString());
+
+		// 2nd Validation (Validating Promotion ID and Program Type )
+
+		if (!(validationmap.get("promotionId").isEmpty())) {
+
+			System.out.println("Contains any String");
+
+		}
+
+		if (validationmap.get("promoType").contains("EPISODE")) {
+
+			System.out.println("Contains any EPISODE");
+
+		}
+
+		System.out.println(validationmap.toString());
 
 	}
 
